@@ -9,7 +9,7 @@ class Api(object):
         else:
             return Api.ReturnContent(0, requests.get('https://post-shift.ru/api.php?action=new&type=json'))
     def GetList(self, key):
-        return Api.ReturnContent(0, 'https://post-shift.ru/api.php?action=getlist&key=' + key + '&type=json')
+        return eval(requests.get('https://post-shift.ru/api.php?action=getlist&key=' + key + '&type=json').content.decode('utf-8'))
     def GetText(self, key, mID):
         return Api.ReturnContent(0, 'https://post-shift.ru/api.php?action=getmail&key='+ key+'&id='+mID + '&type=json')
     def GetLiveTime(self, key):
