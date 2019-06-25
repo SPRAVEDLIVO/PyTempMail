@@ -11,7 +11,7 @@ class Api(object):
     def GetList(self, key):
         return eval(requests.get('https://post-shift.ru/api.php?action=getlist&key=' + key + '&type=json').content.decode('utf-8'))
     def GetText(self, key, mID):
-        return Api.ReturnContent(0, 'https://post-shift.ru/api.php?action=getmail&key='+ key+'&id='+mID + '&type=json')
+        return eval(requests.get('https://post-shift.ru/api.php?action=getmail&key='+ key+'&id='+str(mID) + '&type=json').content.decode('utf-8'))
     def GetLiveTime(self, key):
         return json.loads(requests.get('https://post-shift.ru/api.php?action=livetime&key='+ key + '&type=json').content.decode('utf-8'))
     def UpdateLiveTime(self, key):
@@ -20,3 +20,7 @@ class Api(object):
         return requests.get('https://post-shift.ru/api.php?action=delete&key='+ key + '&type=json')
     def ClearMail(self, key):
         return Api.ReturnContent(0, 'https://post-shift.ru/api.php?action=clear&key='+ key + '&type=json')
+    def CheckInbox(self, key):
+        r = json.loads(requests.get('https://post-shift.ru/api.php?action=getlist&key=' + key + '&type=json').content.decode('utf-8'))
+        if r.get('error') is not None: return False
+        else: return True
