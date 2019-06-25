@@ -5,10 +5,18 @@ root = tk.Tk()
 root.geometry('1075x665')
 root.title('PyTemp')
 keyList = []
+buttonList = []
+textList = []
 y=0
 scrolls = []
 mainmenu = tk.Menu(root) 
-root.config(menu=mainmenu) 
+root.config(menu=mainmenu)
+def clearButtons():
+	for button in buttonList:
+		button.place_forget()
+def ClearText():
+	for text in textList:
+		text.place_forget()
 def createmail():
 	name = simpledialog.askstring('Input', 'Give a name')
 	api = postshiftapi.Api()
@@ -31,7 +39,9 @@ def setMessages():
 			subject = message.get('subject')
 			fromuser = message.get('from')
 			mID = message.get('id')
-			tk.Button(text = 'Subject: '+subject+'\nFrom:'+fromuser, command =lambda e=mID:displayMessage(e), width=40,height=2).place(x=0, y=y*40)
+			btn = tk.Button(text = 'Subject: '+subject+'\nFrom:'+fromuser, command =lambda e=mID:displayMessage(e), width=40,height=2)
+			btn.place(x=0, y=y*40)
+			buttonList.append(btn)
 			y+=1
 		y=0
 def scrolls_clear():
@@ -41,8 +51,10 @@ def displayMessage(mID):
 	scrolls_clear()
 	api = postshiftapi.Api()
 	message = api.GetText(keyList[-1], mID).get('message')
+	print(message)
 	text = tk.Text(width=60,height=20)
 	text.place(x=500,y=20)
+	textList.append(text)
 	scroll = tk.Scrollbar(command=text.yview)
 	scroll.pack(side=tk.RIGHT, fill=tk.Y)
 	scrolls.append(scroll)
@@ -52,10 +64,11 @@ def delmail():
 	api = postshiftapi.Api()
 	api.DeleteMail(keyList[-1])
 	root.title('PyTemp')
+	clearButtons()
+	ClearText()
+	scrolls_clear()
 	global th
-	try:
-		th._stop()
-	except: pass
+	th._stop()
 	del keyList[-1], api
 def GetAlive(mode):
 	if mode == 'system':
@@ -73,6 +86,7 @@ def enter_key():
 	key = simpledialog.askstring('Input', 'Enter your key')
 	keyList.append(key)
 	setMessages()
+	refreshList()
 def refreshList():
 	tm = time.time()
 	while time.time() - tm < 10:
